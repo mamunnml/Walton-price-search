@@ -21,10 +21,14 @@ def load_data():
         # শুধুমাত্র প্রয়োজনীয় প্রথম ৩টি কলাম নেওয়া হচ্ছে
         if df.shape[1] >= 3:
             df = df.iloc[:, :3] 
-            df.columns = ['Product Name', 'Model', 'Price'] # নাম ফিক্সড করা হলো
+            df.columns = ['Product Name', 'Model', 'Price']
             all_data.append(df)
         
     combined_df = pd.concat(all_data, ignore_index=True)
+    
+    # মডেলের নাম ও প্রাইস অনুযায়ী ডুপ্লিকেট (রিপিট) ডাটা রিমুভ করা
+    combined_df = combined_df.drop_duplicates(subset=['Model', 'Price'])
+    
     return combined_df
 
 try:
@@ -40,11 +44,12 @@ try:
         if not results.empty:
             st.success(f"🎉 মোট {len(results)}টি প্রোডাক্ট পাওয়া গেছে!")
             
-            # শুধুমাত্র মডেল এবং দাম দেখানো হচ্ছে
+            st.write("---") # একটি ডিভাইডার লাইন
+            
+            # প্রতিটি মডেল ও প্রাইস এক লাইনে বড় অক্ষরে দেখানো
             for index, row in results.iterrows():
-                with st.expander(f"📦 {row['Model']} — {row['Price']}", expanded=True):
-                    st.write(f"**মডেল:** {row['Model']}")
-                    st.write(f"**মূল্য:** :green[{row['Price']}]")
+                # HTML ব্যবহার করে ফন্ট সাইজ বড় (20px) এবং এক লাইনে করা হয়েছে
+                st.markdown(f"<p style='font-size:20px; font-weight:bold; margin-bottom:10px;'>📦 {row['Model']} — <span style='color:#2ecc71;'>{row['Price']}</span></p>", unsafe_allow_html=True)
         else:
             st.warning("⚠️ দুঃখিত, এই মডেলের কোনো প্রোডাক্ট পাওয়া যায়নি। অনুগ্রহ করে সঠিক বানান চেক করুন।")
             
