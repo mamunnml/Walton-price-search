@@ -18,12 +18,10 @@ def load_data():
     for sheet in xls.sheet_names:
         df = pd.read_excel(file_path, sheet_name=sheet)
         
-        # শুধুমাত্র প্রয়োজনীয় ৩টি কলাম রাখছি এবং বাকি অতিরিক্ত কলাম বাদ দিচ্ছি
-        # যদি কলামের নাম আলাদা হয়, তবে পজিশন (0, 1, 2) অনুযায়ী নিচ্ছি
+        # শুধুমাত্র প্রয়োজনীয় প্রথম ৩টি কলাম নেওয়া হচ্ছে
         if df.shape[1] >= 3:
-            df = df.iloc[:, :3] # প্রথম ৩টি কলাম নেওয়া হলো
+            df = df.iloc[:, :3] 
             df.columns = ['Product Name', 'Model', 'Price'] # নাম ফিক্সড করা হলো
-            df['Category'] = sheet  # শিটের নাম ক্যাটাগরি হিসেবে যোগ করা
             all_data.append(df)
         
     combined_df = pd.concat(all_data, ignore_index=True)
@@ -42,11 +40,10 @@ try:
         if not results.empty:
             st.success(f"🎉 মোট {len(results)}টি প্রোডাক্ট পাওয়া গেছে!")
             
-            # রেজাল্ট সুন্দরভাবে কার্ড আকারে দেখানো
+            # শুধুমাত্র মডেল এবং দাম দেখানো হচ্ছে
             for index, row in results.iterrows():
                 with st.expander(f"📦 {row['Model']} — {row['Price']}", expanded=True):
-                    st.write(f"**প্রোডাক্টের ধরন:** {row['Product Name']}")
-                    st.write(f"**ক্যাটাগরি:** {row['Category']}")
+                    st.write(f"**মডেল:** {row['Model']}")
                     st.write(f"**মূল্য:** :green[{row['Price']}]")
         else:
             st.warning("⚠️ দুঃখিত, এই মডেলের কোনো প্রোডাক্ট পাওয়া যায়নি। অনুগ্রহ করে সঠিক বানান চেক করুন।")
